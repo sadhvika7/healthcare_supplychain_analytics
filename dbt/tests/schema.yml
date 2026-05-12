@@ -1,0 +1,117 @@
+version: 2
+
+sources:
+  - name: hsc_raw
+    schema: hsc_staging
+    description: >
+      Raw data loaded from S3 curated Parquet layer via Redshift COPY commands.
+      inventory_raw sourced from Hospital Supply Chain (Kaggle vanpatangan).
+      shipments_raw sourced from USAID SCMS Delivery History Dataset.
+      procurement_raw sourced from DataCo Smart Supply Chain (Kaggle shashwatwork).
+    tables:
+      - name: inventory_raw
+        freshness:
+          warn_after:  {count: 25, period: hour}
+          error_after: {count: 49, period: hour}
+        loaded_at_field: etl_load_ts
+      - name: shipments_raw
+        freshness:
+          warn_after:  {count: 25, period: hour}
+          error_after: {count: 49, period: hour}
+        loaded_at_field: etl_load_ts
+      - name: procurement_raw
+        freshness:
+          warn_after:  {count: 25, period: hour}
+          error_after: {count: 49, period: hour}
+        loaded_at_field: etl_load_ts
+
+models:
+  - name: stg_inventory
+    description: "Cleaned inventory view sourced from hospital-supply-chain Kaggle dataset"
+    columns:
+      - name: inventory_id
+        tests: [not_null, unique]
+      - name: hospital_id
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_hospital'), field: hospital_id}
+      - name: product_id
+        tests: [not_null]
+      - name: quantity_on_hand
+        tests:
+          - not_null
+          - dbt_utils.accepted_range: {min_value: 0}
+      - name: stock_status
+        tests:
+          - not_null
+          - accepted_values:
+              values: [STOCKOUT, CRITICAL_LOW, LOW, ADEQUATE, OVERSTOCK]
+      - name: record_date
+        tests: [not_null]
+
+  - name: stg_shipments
+    description: "Cleaned shipment view sourced from USAID SCMS dataset"
+    columns:
+      - name: shipment_id
+        tests: [not_null, unique]
+      - name: supplier_id
+        tests: [not_null]
+      - name: priority
+        tests:
+          - not_null
+          - accepted_values: {values: [CRITICAL, HIGH, STANDARD, LOW]}
+      - name: delivery_performance
+        tests:
+          - accepted_values:
+              values: [EARLY, ON_TIME, SLIGHTLY_LATE, SIGNIFICANTLY_LATE, IN_TRANSIT]
+      - name: carrier
+        tests: [not_null]
+      - name: ship_date
+        tests: [not_null]
+
+  - name: stg_procurement
+    description: "Cleaned procurement view sourced from DataCo Smart Supply Chain dataset"
+    columns:
+      - name: purchase_order_id
+        tests: [not_null, unique]
+      - name: po_status
+        tests:
+          - accepted_values: {values: [DRAFT, APPROVED, RECEIVED, CANCELLED]}
+      - name: order_date
+        tests: [not_null]
+
+  - name: fact_inventory
+    description: "Incremental fact table — daily inventory snapshot with dimension keys"
+    tests:
+      - dbt_utils.recency:
+          datepart: day
+          field: record_date
+          interval: 1
+    columns:
+      - name: inventory_id
+        tests: [not_null, unique]
+      - name: date_key
+        tests: [not_null]
+      - name: hospital_key
+        tests: [not_null]
+      - name: product_key
+        tests: [not_null]
+
+  - name: fact_shipments
+    description: "Incremental fact table — shipment records with SLA metrics"
+    columns:
+      - name: shipment_id
+        tests: [not_null, unique]
+      - name: ship_date_key
+        tests: [not_null]
+      - name: supplier_key
+        tests: [not_null]
+
+  - name: kpi_operational_summary
+    description: "Daily operational KPIs per hospital for Power BI dashboards"
+    columns:
+      - name: kpi_date
+        tests: [not_null]
+      - name: operational_health_score
+        tests:
+          - dbt_utils.accepted_range: {min_value: 0, max_value: 100}

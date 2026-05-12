@@ -1,0 +1,32 @@
+name: 'hsc_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'hsc_redshift'
+
+model-paths:    ["models"]
+test-paths:     ["tests"]
+snapshot-paths: ["snapshots"]
+macro-paths:    ["macros"]
+target-path:    "target"
+log-path:       "logs"
+packages-install-path: "dbt_packages"
+
+models:
+  hsc_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags: ["staging"]
+    marts:
+      +materialized: incremental
+      +schema: mart
+      +tags: ["mart"]
+    kpi:
+      +materialized: table
+      +schema: kpi
+      +tags: ["kpi","dashboard"]
+
+vars:
+  run_date: "{{ modules.datetime.date.today() }}"
+  env: "prod"

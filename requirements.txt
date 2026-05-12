@@ -1,0 +1,48 @@
+# Healthcare Supply Chain Analytics Platform
+# Python Dependencies
+# All versions verified available as of May 2025
+
+# ── AWS ──────────────────────────────────────────────────────────
+boto3==1.34.69
+botocore==1.34.69
+s3fs==2024.3.1
+
+# ── PySpark (local dev — Glue 4.0 uses Spark 3.3.x on managed runtime) ──
+pyspark==3.5.1
+
+# ── Apache Airflow & AWS Provider ────────────────────────────────
+apache-airflow==2.9.2
+apache-airflow-providers-amazon==8.20.0
+apache-airflow-providers-slack==8.7.1
+
+# ── dbt ──────────────────────────────────────────────────────────
+dbt-core==1.8.4
+dbt-redshift==1.8.1
+dbt-utils==1.2.0
+
+# ── Data Processing ──────────────────────────────────────────────
+pandas==2.2.2
+numpy==1.26.4
+pyarrow==16.1.0
+
+# ── Redshift & Database ───────────────────────────────────────────
+redshift-connector==2.1.3
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.30
+
+# ── Data Quality ─────────────────────────────────────────────────
+great-expectations==0.18.19
+
+# ── Logging & Monitoring ──────────────────────────────────────────
+structlog==24.1.0
+watchtower==3.2.0
+
+# ── Testing ──────────────────────────────────────────────────────
+pytest==8.1.1
+pytest-mock==3.14.0
+moto==5.0.7
+
+# ── Dev Tooling ───────────────────────────────────────────────────
+black==24.4.2
+flake8==7.0.0
+pre-commit==3.7.0
