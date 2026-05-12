@@ -158,7 +158,7 @@ healthcare-supplychain-analytics/
 
 | Dataset | Source | URL | Records |
 |---|---|---|---|
-| Shipments & Pricing | USAID SCMS | https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv | ~10K |
+| Shipments & Pricing | USAID SCMS (Kaggle mirror) | https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data | ~10K |
 | Hospital Inventory | Kaggle (vanpatangan) | https://www.kaggle.com/datasets/vanpatangan/hospital-supply-chain | Varies |
 | Procurement Orders | DataCo / Kaggle | https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis | ~180K |
 | Supplier Master | Synthetic | Generated via `datasets/generate_suppliers.py` | ~500 |
@@ -240,14 +240,15 @@ aws redshift create-cluster \
 ### Step 2 — Download & Upload Data
 
 ```bash
-# USAID dataset — no auth required
-curl -L "https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv?accessType=DOWNLOAD" \
-  -o SCMS_Delivery_History_Dataset.csv
-aws s3 cp SCMS_Delivery_History_Dataset.csv s3://hsc-analytics-raw/shipments/
+# All datasets via Kaggle API — requires ~/.kaggle/kaggle.json
+# Get your token: https://www.kaggle.com/settings → API → Create New Token
+# Note: data.usaid.gov is offline since 2025; SCMS dataset is preserved on Kaggle
+pip install kaggle
 
-# Kaggle datasets (requires Kaggle API token)
-kaggle datasets download -d vanpatangan/hospital-supply-chain       -p ./raw/
+kaggle datasets download -d apoorvwatsky/supply-chain-shipment-pricing-data -p ./raw/
+kaggle datasets download -d vanpatangan/hospital-supply-chain               -p ./raw/
 kaggle datasets download -d shashwatwork/dataco-smart-supply-chain-for-big-data-analysis -p ./raw/
+unzip "./raw/*.zip" -d ./raw/
 aws s3 sync ./raw/ s3://hsc-analytics-raw/
 ```
 

@@ -2,7 +2,7 @@
 -- Layer: Staging
 -- Source: Shipment curated data loaded from USAID SCMS dataset
 --
--- Source URL: https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv?accessType=DOWNLOAD
+-- Source URL: https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data
 -- Kaggle:     https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data
 --
 -- Column mapping from USAID source → curated → staging:

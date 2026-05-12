@@ -78,15 +78,16 @@ aws glue create-crawler \
 ## Step 5: Upload Data & Scripts
 
 ```bash
-# USAID dataset (no auth)
-curl -L "https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv?accessType=DOWNLOAD" \
-  -o SCMS.csv
-aws s3 cp SCMS.csv s3://hsc-analytics-raw/shipments/
+# All datasets via Kaggle API (requires ~/.kaggle/kaggle.json)
+# Note: data.usaid.gov went offline in 2025; SCMS dataset is preserved on Kaggle
+# Get your token at: https://www.kaggle.com/settings → API → Create New Token
+pip install kaggle
 
-# Kaggle (requires kaggle token ~/.kaggle/kaggle.json)
+kaggle datasets download -d apoorvwatsky/supply-chain-shipment-pricing-data -p ./raw/
 kaggle datasets download -d vanpatangan/hospital-supply-chain -p ./raw/
 kaggle datasets download \
   -d shashwatwork/dataco-smart-supply-chain-for-big-data-analysis -p ./raw/
+unzip "./raw/*.zip" -d ./raw/
 aws s3 sync ./raw/ s3://hsc-analytics-raw/
 
 # Glue scripts

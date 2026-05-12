@@ -128,7 +128,7 @@ SORTKEY (date_key, product_key);
 
 -- ── fact_shipments ────────────────────────────────────────
 -- Source : USAID Supply Chain Shipment & Pricing Data (SCMS)
--- URL    : https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv
+-- URL    : https://https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data
 -- Grain  : one row per shipment (USAID "id" column)
 CREATE TABLE IF NOT EXISTS hsc_dw.fact_shipments (
     shipment_fact_key     BIGINT IDENTITY(1,1) NOT NULL,

@@ -8,11 +8,14 @@ public sources; two are generated synthetically in the same style.
 
 ## Dataset 1 — USAID Supply Chain Shipment & Pricing Data  *(Primary shipment source)*
 
+> ⚠️ **Note:** The original `data.usaid.gov` domain went offline in early 2025 when USAID
+> was shut down. The dataset is preserved and downloadable via the mirrors below.
+
 | Attribute | Detail |
 |---|---|
-| **URL** | https://data.usaid.gov/Global-Health-Supply-Chain-Procurement-Database |
-| **Kaggle Mirror** | https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data |
-| **License** | CC-BY (USAID Open Data) |
+| **Kaggle** | https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data |
+| **data.world** | https://data.world/usaid/supply-chain-shipment-pricing |
+| **License** | CC-BY (original USAID Open Data) |
 | **Records** | ~10,000 rows |
 | **File** | `SCMS_Delivery_History_Dataset.csv` |
 
@@ -167,16 +170,23 @@ All fact tables join to dim_date via date_key.
 ## Download Instructions
 
 ```bash
-# USAID dataset (direct — no auth required)
-curl -L "https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv?accessType=DOWNLOAD" \
-  -o datasets/raw/SCMS_Delivery_History_Dataset.csv
-
-# Kaggle datasets (requires Kaggle API key)
+# All datasets require a Kaggle API token (~/.kaggle/kaggle.json)
+# Get yours at: https://www.kaggle.com/settings → API → Create New Token
 pip install kaggle
+
+# Dataset 1 — USAID SCMS (mirrored from original government source, now offline)
 kaggle datasets download -d apoorvwatsky/supply-chain-shipment-pricing-data -p datasets/raw/
+# Alternative mirror:  https://data.world/usaid/supply-chain-shipment-pricing
+
+# Dataset 2 — Hospital Supply Chain
 kaggle datasets download -d vanpatangan/hospital-supply-chain -p datasets/raw/
+
+# Dataset 3 — DataCo Smart Supply Chain
 kaggle datasets download -d shashwatwork/dataco-smart-supply-chain-for-big-data-analysis -p datasets/raw/
 
-# Generate synthetic supplier master
+# Dataset 4 — Generate synthetic supplier master
 python datasets/generate_suppliers.py --output datasets/raw/suppliers.csv --count 500
+
+# Upload all to S3
+aws s3 sync datasets/raw/ s3://hsc-analytics-raw/
 ```

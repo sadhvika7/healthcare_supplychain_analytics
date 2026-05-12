@@ -3,7 +3,7 @@ AWS Glue ETL Job: Shipment Processing
 Healthcare Supply Chain Analytics Platform
 
 Source Dataset : USAID Supply Chain Shipment & Pricing Data
-Source URL     : https://data.usaid.gov/api/views/a3rc-nmf6/rows.csv?accessType=DOWNLOAD
+Source URL     : https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data
 Kaggle Mirror  : https://www.kaggle.com/datasets/apoorvwatsky/supply-chain-shipment-pricing-data
 
 Source Columns (exact):
